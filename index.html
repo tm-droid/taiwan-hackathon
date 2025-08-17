@@ -1,0 +1,466 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ready Rangers! — Disaster Prep Games for Kids</title>
+  <meta name="description" content="Fun mini‑games that teach children how to prepare for earthquakes, floods, fires, and storms." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#fbf9ff;--card:#ffffff;--ink:#222;--muted:#5b5b73;--brand:#6c63ff;--brand-2:#00c2a8;--warn:#ffb703;--danger:#ef476f;--ok:#06d6a0;--sky:#66c0ff;
+      --shadow:0 10px 30px rgba(0,0,0,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:"Nunito", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;background:linear-gradient(180deg,var(--bg),#eef6ff 60%);
+      color:var(--ink)}
+    header{
+      position:sticky;top:0;z-index:10;background:linear-gradient(90deg,var(--brand),var(--brand-2));color:#fff;
+      box-shadow:var(--shadow)
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:clamp(12px,2vw,24px)}
+    .bar{display:flex;align-items:center;gap:16px;justify-content:space-between}
+    .logo{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.2px}
+    .logo .badge{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#fff;color:var(--brand)}
+    nav{display:flex;gap:8px;flex-wrap:wrap}
+    nav button{background:#ffffff20;color:#fff;border:0;padding:10px 14px;border-radius:999px;font-weight:700;cursor:pointer}
+    nav button[aria-selected="true"], nav button:hover{background:#fff;color:var(--brand)}
+
+    main{padding:24px 0}
+    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center}
+    .hero h1{font-family:"Fredoka";font-size:clamp(28px,4.5vw,48px);line-height:1.05;margin:0}
+    .hero p{color:var(--muted);font-size:clamp(14px,1.5vw,18px)}
+    .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
+    .cta a{background:var(--brand);color:#fff;text-decoration:none;padding:12px 16px;border-radius:14px;font-weight:800;box-shadow:var(--shadow)}
+    .cta a.alt{background:var(--brand-2)}
+
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+
+    .pill{display:inline-flex;align-items:center;gap:8px;background:#eef; color:#3a3a66; padding:6px 10px;border-radius:999px;font-weight:700;font-size:12px}
+
+    /* Tabs */
+    .tabs{margin-top:24px}
+    .tabpanel{display:none}
+    .tabpanel[aria-hidden="false"]{display:block}
+
+    /* GAME 1: Go‑Bag Drag & Drop */
+    .gobag{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .bag{border:3px dashed #b5b9ff;border-radius:16px;min-height:260px;padding:12px;display:grid;grid-template-rows:auto 1fr;gap:10px}
+    .bag h4{margin:0}
+    .items{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+    .item{background:#f6f8ff;border:2px solid #dfe6ff;border-radius:12px;padding:8px;display:flex;gap:8px;align-items:center;cursor:grab}
+    .item[draggable="false"]{opacity:.6;cursor:not-allowed}
+    .dropzone{background:#f8fffb;border:3px dashed #b7f5e7;border-radius:14px;min-height:180px;padding:10px;display:flex;flex-wrap:wrap;gap:8px}
+    .token{background:#eafff7;border:2px solid #b7f5e7;border-radius:999px;padding:6px 10px;font-weight:700}
+    .score{font-weight:800}
+
+    /* GAME 2: Evacuation Maze */
+    .maze-wrap{display:grid;grid-template-columns:auto 1fr;gap:18px}
+    canvas{background:#fff;border-radius:12px;box-shadow:var(--shadow)}
+    .legend{display:grid;gap:8px}
+    .legend .chip{display:inline-flex;align-items:center;gap:8px}
+    .legend .dot{width:16px;height:16px;border-radius:4px;display:inline-block}
+
+    /* GAME 3: Quick Quiz */
+    .quiz q{font-weight:800;font-size:18px}
+    .quiz .choices{display:grid;gap:10px;margin-top:12px}
+    .quiz button.choice{background:#f1f4ff;border:2px solid #dfe6ff;border-radius:12px;padding:10px;text-align:left;cursor:pointer}
+    .quiz .result{font-weight:800;margin-top:10px}
+
+    /* GAME 4: Hazard Match (Memory) */
+    .memory{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+    .card-tile{position:relative;aspect-ratio:1/1;border-radius:14px;box-shadow:var(--shadow);cursor:pointer;transform-style:preserve-3d;transition:transform .4s}
+    .card-tile.flipped{transform:rotateY(180deg)}
+    .face{position:absolute;inset:0;display:grid;place-items:center;border-radius:14px;backface-visibility:hidden}
+    .front{background:linear-gradient(135deg,#e9f0ff,#fff)}
+    .back{background:linear-gradient(135deg,#dff9f2,#fff);transform:rotateY(180deg);padding:10px;text-align:center;font-weight:800}
+
+    /* Footer */
+    footer{margin:40px 0;color:var(--muted);text-align:center}
+
+    /* Responsive */
+    @media (max-width: 840px){
+      .hero{grid-template-columns:1fr}
+      .gobag{grid-template-columns:1fr}
+      .maze-wrap{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap bar" role="navigation" aria-label="Main">
+      <div class="logo" aria-label="Ready Rangers Home">
+        <span class="badge" aria-hidden="true">🛡️</span>
+        <span>Ready <span style="opacity:.9">Rangers!</span></span>
+      </div>
+      <nav aria-label="Sections">
+        <button class="tablink" data-tab="home" aria-selected="true">Home</button>
+        <button class="tablink" data-tab="gobag">Pack a Go‑Bag</button>
+        <button class="tablink" data-tab="maze">Evacuation Maze</button>
+        <button class="tablink" data-tab="quiz">Quick Quiz</button>
+        <button class="tablink" data-tab="memory">Hazard Match</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="home" class="tabs card tabpanel" aria-hidden="false">
+      <div class="hero">
+        <div>
+          <span class="pill">🌎 Learn • 🧩 Play • 🛟 Prepare</span>
+          <h1>Be a Safety Hero!</h1>
+          <p>Practice earthquake, fire, flood, and storm safety with fun mini‑games. Earn badges and learn real‑world tips you can use with your family.</p>
+          <div class="cta">
+            <a href="#" data-jumpto="gobag">Start with Go‑Bag ▶</a>
+            <a href="#" class="alt" data-jumpto="quiz">Try a Quick Quiz</a>
+          </div>
+          <p style="margin-top:14px">✨ <strong>Grown‑ups:</strong> Play together and talk about your family plan: meeting spot, emergency contacts, and where the go‑bag lives.</p>
+        </div>
+        <div class="card">
+          <div class="grid">
+            <div class="card" style="background:linear-gradient(135deg,#ffe8a3,#fff)">
+              <h3>Earthquake</h3>
+              <p>Drop, Cover, Hold On under a sturdy table. Stay put until shaking stops.</p>
+            </div>
+            <div class="card" style="background:linear-gradient(135deg,#c8f7ff,#fff)">
+              <h3>Flood</h3>
+              <p>Go to higher ground. Do not walk or drive through flood water.</p>
+            </div>
+            <div class="card" style="background:linear-gradient(135deg,#ffd1d9,#fff)">
+              <h3>Fire</h3>
+              <p>Crawl low under smoke, feel doors with the back of your hand, get out fast.</p>
+            </div>
+            <div class="card" style="background:linear-gradient(135deg,#e0eaff,#fff)">
+              <h3>Storm</h3>
+              <p>Stay indoors, away from windows. Unplug electronics during lightning.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GAME 1: GO‑BAG -->
+    <section id="gobag" class="tabs card tabpanel" aria-hidden="true">
+      <h2>Pack a Go‑Bag 🎒</h2>
+      <p>Drag essentials into the backpack. You need <strong>8</strong> must‑have items to win!</p>
+      <div class="gobag">
+        <div class="card">
+          <h3>Items</h3>
+          <div class="items" id="itemBank" aria-label="Item Bank"></div>
+        </div>
+        <div class="bag">
+          <h4>Backpack Drop Zone</h4>
+          <div id="bagDrop" class="dropzone" aria-label="Go‑bag dropzone" aria-live="polite"></div>
+          <div><span class="score">Score:</span> <span id="score">0</span> / 8
+            <button id="resetBag" style="float:right">Reset</button>
+          </div>
+        </div>
+      </div>
+      <p style="margin-top:10px;color:var(--muted)">Tip: Tap items if dragging is hard — they’ll pop into the bag!</p>
+    </section>
+
+    <!-- GAME 2: MAZE -->
+    <section id="maze" class="tabs card tabpanel" aria-hidden="true">
+      <h2>Evacuation Maze 🧭</h2>
+      <div class="maze-wrap">
+        <div class="legend card">
+          <strong>How to play</strong>
+          <span>Use your <kbd>arrow keys</kbd> or <kbd>WSAD</kbd> to reach the 🅰️ Assembly Point.</span>
+          <div class="chip"><span class="dot" style="background:var(--brand)"></span> You</div>
+          <div class="chip"><span class="dot" style="background:var(--danger)"></span> Hazard</div>
+          <div class="chip"><span class="dot" style="background:var(--ok)"></span> Safe Exit</div>
+          <button id="mazeReset">New Maze</button>
+        </div>
+        <canvas id="mazeCanvas" width="520" height="520" aria-label="Evacuation maze game" role="img"></canvas>
+      </div>
+    </section>
+
+    <!-- GAME 3: QUIZ -->
+    <section id="quiz" class="tabs card tabpanel" aria-hidden="true">
+      <h2>Quick Quiz 📘</h2>
+      <div class="quiz card">
+        <div id="quizBox"></div>
+        <div class="result" id="quizResult" aria-live="polite"></div>
+        <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+          <button id="nextQ">Next Question</button>
+          <button id="restartQuiz">Restart</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- GAME 4: MEMORY MATCH -->
+    <section id="memory" class="tabs card tabpanel" aria-hidden="true">
+      <h2>Hazard Match 🧠</h2>
+      <p>Flip cards to match each <strong>hazard</strong> with the best <strong>action</strong>.</p>
+      <div class="memory" id="memoryGrid"></div>
+      <div style="margin-top:10px"><button id="resetMemory">Shuffle</button></div>
+    </section>
+
+    <section class="card" style="margin-top:18px">
+      <h3>Family Prep Checklist ✅</h3>
+      <ul>
+        <li>Pick a meeting spot outside your home and near your neighborhood.</li>
+        <li>Memorize or keep a card with emergency contacts.</li>
+        <li>Know how to turn off water and power (grown‑ups only!).</li>
+        <li>Keep your go‑bag in a place everyone can reach.</li>
+      </ul>
+    </section>
+
+    <footer>
+      Made with 💙 for young safety heroes. Share and play together!
+    </footer>
+  </main>
+
+  <script>
+    // ---------- Tab Navigation ----------
+    const tablinks=[...document.querySelectorAll('.tablink')];
+    const tabpanels=[...document.querySelectorAll('.tabpanel')];
+    function openTab(id){
+      tablinks.forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===id));
+      tabpanels.forEach(p=>p.setAttribute('aria-hidden', p.id!==id));
+      history.replaceState(null, '', '#'+id);
+    }
+    tablinks.forEach(btn=>btn.addEventListener('click',()=>openTab(btn.dataset.tab)));
+    document.querySelectorAll('[data-jumpto]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();openTab(a.dataset.jumpto)}));
+    window.addEventListener('hashchange',()=>{const id=location.hash.replace('#','')||'home'; if(document.getElementById(id)) openTab(id)});
+    openTab((location.hash||'#home').replace('#',''));
+
+    // ---------- GAME 1: Go‑Bag Drag & Drop ----------
+    const ESSENTIALS=[
+      {id:'water',label:'Water 💧',must:true},
+      {id:'food',label:'Snacks/Energy Bars 🥪',must:true},
+      {id:'firstaid',label:'First Aid Kit ⛑️',must:true},
+      {id:'flash',label:'Flashlight 🔦',must:true},
+      {id:'batt',label:'Batteries 🔋',must:true},
+      {id:'radio',label:'Radio 📻',must:true},
+      {id:'mask',label:'Mask 😷',must:true},
+      {id:'docs',label:'Important Docs 📄',must:true},
+      // good-to-have
+      {id:'whistle',label:'Whistle 📯',must:false},
+      {id:'charger',label:'Phone Charger 🔌',must:false},
+      {id:'cash',label:'Emergency Cash 💵',must:false},
+      {id:'clothes',label:'Warm Clothes 🧣',must:false},
+      {id:'toy',label:'Small Comfort Toy 🧸',must:false},
+      {id:'soap',label:'Soap & Wipes 🧼',must:false},
+      {id:'meds',label:'Medicines 💊',must:false}
+    ];
+    const itemBank=document.getElementById('itemBank');
+    const bagDrop=document.getElementById('bagDrop');
+    const scoreEl=document.getElementById('score');
+    const resetBag=document.getElementById('resetBag');
+    let packed=new Set();
+
+    function renderItems(){
+      itemBank.innerHTML='';
+      ESSENTIALS.forEach(it=>{
+        const div=document.createElement('div');
+        div.className='item';
+        div.textContent=it.label;
+        div.setAttribute('draggable','true');
+        div.dataset.id=it.id;
+        div.addEventListener('dragstart',ev=>{
+          ev.dataTransfer.setData('text/plain',it.id);
+        });
+        div.addEventListener('click',()=>addToBag(it.id,it.label));
+        itemBank.appendChild(div);
+      });
+    }
+    function addToBag(id,label){
+      if([...bagDrop.children].some(t=>t.dataset.id===id)) return;
+      const token=document.createElement('span');
+      token.className='token';
+      token.textContent=label;
+      token.dataset.id=id;
+      token.title='Click to remove';
+      token.tabIndex=0;
+      token.addEventListener('click',()=>{token.remove(); updateScore();});
+      token.addEventListener('keydown',e=>{if(e.key==='Backspace'||e.key==='Delete'){token.remove(); updateScore();}});
+      bagDrop.appendChild(token);
+      updateScore();
+    }
+    bagDrop.addEventListener('dragover',ev=>{ev.preventDefault();});
+    bagDrop.addEventListener('drop',ev=>{
+      ev.preventDefault();
+      const id=ev.dataTransfer.getData('text/plain');
+      const item=ESSENTIALS.find(x=>x.id===id);
+      if(item) addToBag(item.id,item.label);
+    });
+    function updateScore(){
+      const ids=[...bagDrop.children].map(c=>c.dataset.id);
+      const needed=ESSENTIALS.filter(x=>x.must).map(x=>x.id);
+      const count=needed.filter(id=>ids.includes(id)).length;
+      scoreEl.textContent=count;
+      if(count>=8){
+        bagDrop.setAttribute('aria-label','Great job! Your go‑bag is ready.');
+        setTimeout(()=>alert('🎉 You packed all essentials! Great job, Ready Ranger!'),50);
+      }
+    }
+    resetBag.addEventListener('click',()=>{bagDrop.innerHTML='';updateScore();});
+    renderItems();
+
+    // ---------- GAME 2: Evacuation Maze ----------
+    const cvs=document.getElementById('mazeCanvas');
+    const ctx=cvs.getContext('2d');
+    const mazeSize=13; // odd for walls layout
+    let grid, player, goal;
+
+    function carveMaze(w,h){
+      // Initialize
+      const maze=Array.from({length:h},(_,y)=>Array.from({length:w},(_,x)=>1)); // 1 wall, 0 path
+      function carve(x,y){
+        const dirs=[[2,0],[0,2],[-2,0],[0,-2]].sort(()=>Math.random()-.5);
+        for(const [dx,dy] of dirs){
+          const nx=x+dx, ny=y+dy;
+          if(ny>0 && ny<h-1 && nx>0 && nx<w-1 && maze[ny][nx]===1){
+            maze[y+dy/2][x+dx/2]=0; maze[ny][nx]=0; carve(nx,ny);
+          }
+        }
+      }
+      maze[1][1]=0; carve(1,1);
+      // sprinkle hazards
+      for(let i=0;i<Math.floor((w*h)/18);i++){
+        const y=2+Math.floor(Math.random()*(h-4));
+        const x=2+Math.floor(Math.random()*(w-4));
+        if(maze[y][x]===0) maze[y][x]=2; // hazard
+      }
+      return maze;
+    }
+    function newMaze(){
+      grid=carveMaze(mazeSize,mazeSize);
+      player={x:1,y:1};
+      goal={x:mazeSize-2,y:mazeSize-2};
+      draw();
+    }
+    function draw(){
+      const cell=cvs.width/mazeSize;
+      ctx.clearRect(0,0,cvs.width,cvs.height);
+      for(let y=0;y<mazeSize;y++){
+        for(let x=0;x<mazeSize;x++){
+          if(grid[y][x]===1){ctx.fillStyle='#dfe6ff';}
+          else if(grid[y][x]===2){ctx.fillStyle='#ffd6df';}
+          else{ctx.fillStyle='#ffffff';}
+          ctx.fillRect(x*cell,y*cell,cell-1,cell-1);
+        }
+      }
+      // goal
+      ctx.fillStyle='#06d6a0';
+      ctx.fillRect(goal.x*cell+6,goal.y*cell+6,cell-12,cell-12);
+      ctx.fillStyle='#000';
+      ctx.font='16px Nunito';
+      ctx.fillText('A',goal.x*cell+cell/2-5,goal.y*cell+cell/2+6);
+      // player
+      ctx.fillStyle='#6c63ff';
+      ctx.beginPath();
+      ctx.arc(player.x*cell+cell/2, player.y*cell+cell/2, cell*0.28, 0, Math.PI*2);
+      ctx.fill();
+    }
+    function move(dx,dy){
+      const nx=player.x+dx, ny=player.y+dy;
+      if(nx<0||ny<0||nx>=mazeSize||ny>=mazeSize) return;
+      if(grid[ny][nx]===1) return; // wall
+      if(grid[ny][nx]===2){ alert('⚠️ Hazard! Try a different route.'); return;}
+      player.x=nx; player.y=ny; draw();
+      if(player.x===goal.x && player.y===goal.y){
+        setTimeout(()=>alert('🎉 Safe at the Assembly Point!'),20);
+        newMaze();
+      }
+    }
+    document.getElementById('mazeReset').addEventListener('click',newMaze);
+    window.addEventListener('keydown',e=>{
+      const key=e.key.toLowerCase();
+      if(['arrowup','w'].includes(key)) move(0,-1);
+      if(['arrowdown','s'].includes(key)) move(0,1);
+      if(['arrowleft','a'].includes(key)) move(-1,0);
+      if(['arrowright','d'].includes(key)) move(1,0);
+    });
+    newMaze();
+
+    // ---------- GAME 3: Quiz ----------
+    const QUESTIONS=[
+      {q:'Earthquake starts — what do you do?', a:['Run outside','Drop, Cover, Hold On','Stand in a doorway','Jump on the bed'], c:1},
+      {q:'There is smoke in your house. You should…', a:['Hide in closet','Crawl low under smoke and go out','Open all windows','Use the lift'], c:1},
+      {q:'Flooded road ahead while walking.', a:['Walk through if water is calm','Turn around and find higher ground','Touch the water to check depth','Lie down and float'], c:1},
+      {q:'Storm with lightning.', a:['Stand by the window','Stay indoors away from windows','Hold a metal umbrella','Swim in the pool'], c:1},
+      {q:'Tsunami warning at the beach.', a:['Collect shells','Run to higher ground/inland','Stay to watch the waves','Drive into the water'], c:1},
+      {q:'Wildfire nearby and you smell smoke.', a:['Go outside to see it','Close windows, prepare to leave, check alerts','Take a nap','Light candles'], c:1},
+      {q:'Emergency numbers should be…', a:['Kept only on a phone','Memorized or on a wallet card','Told to a friend once','Not needed'], c:1},
+      {q:'Go‑bag best container?', a:['Glass jar','Backpack','Metal box without handle','Paper bag'], c:1},
+      {q:'During aftershocks you should…', a:['Return under heavy shelves','Be ready to Drop, Cover, Hold On again','Jump on elevator','Run to balcony'], c:1},
+      {q:'If clothes catch fire:', a:['Run fast','Stop, Drop, and Roll','Jump in bed','Wave arms'], c:1}
+    ];
+    let qIndex=0, correct=0;
+    const quizBox=document.getElementById('quizBox');
+    const quizResult=document.getElementById('quizResult');
+    function renderQ(){
+      const q=QUESTIONS[qIndex];
+      quizBox.innerHTML=`<q>${q.q}</q><div class="choices"></div>`;
+      const ctn=quizBox.querySelector('.choices');
+      q.a.forEach((txt,i)=>{
+        const btn=document.createElement('button');
+        btn.className='choice'; btn.textContent=txt;
+        btn.addEventListener('click',()=>{
+          if(i===q.c){correct++; btn.style.borderColor='var(--ok)';}
+          else{btn.style.borderColor='var(--danger)';}
+          [...ctn.children].forEach(b=>b.disabled=true);
+          quizResult.textContent=`Score: ${correct} / ${qIndex+1}`;
+        });
+        ctn.appendChild(btn);
+      });
+    }
+    document.getElementById('nextQ').addEventListener('click',()=>{
+      qIndex=(qIndex+1)%QUESTIONS.length; renderQ();
+    });
+    document.getElementById('restartQuiz').addEventListener('click',()=>{qIndex=0;correct=0;quizResult.textContent='';renderQ();});
+    renderQ();
+
+    // ---------- GAME 4: Hazard Match (Memory) ----------
+    const PAIRS=[
+      ['Earthquake 🌎','Drop, Cover, Hold On'],
+      ['Flood 🌧️','Go to higher ground'],
+      ['Fire 🔥','Crawl low under smoke'],
+      ['Lightning ⚡','Stay away from windows'],
+      ['Tsunami 🌊','Head inland or up'],
+      ['Volcano 🌋','Wear mask + goggles']
+    ];
+    const memoryGrid=document.getElementById('memoryGrid');
+    let cards=[], opened=[]; let matched=0;
+    function setupMemory(){
+      const arr=[]; matched=0; opened=[]; memoryGrid.innerHTML='';
+      PAIRS.forEach(([h,a],idx)=>{
+        arr.push({id:idx+'h',text:h,type:'h'});
+        arr.push({id:idx+'a',text:a,type:'a'});
+      });
+      arr.sort(()=>Math.random()-.5);
+      cards=arr;
+      arr.forEach(card=>{
+        const el=document.createElement('div');
+        el.className='card-tile'; el.dataset.id=card.id; el.dataset.type=card.type;
+        el.innerHTML=`<div class="face front">❓</div><div class="face back">${card.text}</div>`;
+        el.addEventListener('click',()=>flip(el));
+        memoryGrid.appendChild(el);
+      });
+    }
+    function flip(el){
+      if(el.classList.contains('flipped')||opened.length===2) return;
+      el.classList.add('flipped'); opened.push(el);
+      if(opened.length===2){
+        const [a,b]=opened; const ai=a.dataset.id[0], bi=b.dataset.id[0];
+        const samePair=ai===bi && a.dataset.type!==b.dataset.type;
+        setTimeout(()=>{
+          if(samePair){ a.style.pointerEvents='none'; b.style.pointerEvents='none'; matched+=1; if(matched===PAIRS.length) alert('🎉 You matched all safety tips!'); }
+          else{ a.classList.remove('flipped'); b.classList.remove('flipped'); }
+          opened=[];
+        },550);
+      }
+    }
+    document.getElementById('resetMemory').addEventListener('click',setupMemory);
+    setupMemory();
+  </script>
+</body>
+</html>
